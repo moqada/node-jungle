@@ -1,0 +1,46 @@
+{
+  "name": "node-jungle",
+  "version": "0.0.0",
+  "description": "AWS operations by cli should be simpler",
+  "main": "lib/index.js",
+  "bin": {
+    "jungle": "bin/jungle"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "eslint": "eslint src",
+    "test": "npm run eslint && cd example && npm install && npm run jungle",
+    "watch": "babel src --out-dir lib --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moqada/node-jungle.git"
+  },
+  "keywords": [
+    "aws",
+    "cli",
+    "shell"
+  ],
+  "author": "moqada <moqada@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moqada/node-jungle/issues"
+  },
+  "homepage": "https://github.com/moqada/node-jungle#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1.47",
+    "chalk": "^1.1.1",
+    "commander": "^2.8.1",
+    "debug": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-eslint": "^4.1.0",
+    "eslint": "^1.2.1",
+    "eslint-config-moqada": "^2.0.1"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ]
+}

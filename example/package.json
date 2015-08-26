@@ -1,0 +1,14 @@
+{
+  "name": "jungle-example",
+  "version": "1.0.0",
+  "description": "Example test for jungle",
+  "main": "index.js",
+  "scripts": {
+    "jungle": "jungle"
+  },
+  "author": "moqada <moqada@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-jungle": "file:.."
+  }
+}
