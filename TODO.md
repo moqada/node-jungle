@@ -1,5 +1,5 @@
-[ ] Add ec2 ssh command
-[ ] Add ELB Sub commands
-[ ] Refactor Internal libs
-[ ] Add docs
-[ ] Add tests
+- [ ] Add ec2 ssh command
+- [ ] Add ELB Sub commands
+- [ ] Refactor Internal libs
+- [ ] Add docs
+- [ ] Add tests
