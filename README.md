@@ -18,24 +18,6 @@ npm install -g node-jungle
 
 ## Usage
 
-### Set target region
-
-At first, You should be set specific region by [aws-sdk-js](https://github.com/aws/aws-sdk-js) restriction.
-
-Environment variables:
-
-```
-export AWS_REGION=ap-northeast-1
-```
-
-Or
-
-`--region` or `-r` option per commands:
-
-```
-jungle ec2 ls --region=ap-northeast-1
-```
-
 ### EC2
 
 Listing all EC2 instances
@@ -66,6 +48,33 @@ Stopping instance
 
 ```
 jungle ec2 down i-xxxxxx
+```
+
+
+## Configuration
+
+You can create the credential file yourself. By default, its location is at `~/.aws/credentials`
+
+```
+[default]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+```
+
+You should be set specific region by [aws-sdk-js](https://github.com/aws/aws-sdk-js) restriction. You cannot use `~/.aws/config`.
+
+Environment variables:
+
+```
+export AWS_REGION=ap-northeast-1
+```
+
+Or
+
+`--region` or `-r` option per commands:
+
+```
+jungle ec2 ls --region=ap-northeast-1
 ```
 
 
