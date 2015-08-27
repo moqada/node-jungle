@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "eslint": "eslint src",
-    "test": "npm run eslint && cd example && npm install && npm run jungle",
+    "test": "npm run eslint && npm run build && cd example && npm install && npm run jungle",
     "watch": "babel src --out-dir lib --watch"
   },
   "repository": {
