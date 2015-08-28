@@ -3,6 +3,7 @@ import debugModule from 'debug';
 import program from 'commander';
 import {defaultOutputHelp, errorAndExit, noCommandAndExit} from './utils';
 import Jungle from '../';
+import {getTagValue} from '../utils';
 
 const debug = debugModule('jungle:cli');
 
@@ -29,9 +30,8 @@ program.command('ls [name]')
   const jungle = new Jungle(options.parent.region);
   jungle.ec2.getInstances(name).then(instances => {
     instances.forEach(i => {
-      const nameTag = i.Tags.filter(t => t.Key === 'Name').shift();
       const cols = [
-        nameTag ? nameTag.Value : null,
+        getTagValue(i.Tags, 'Name') || null,
         coloredStatus(i.State.Name),
         i.InstanceId,
         i.PrivateIpAddress || null,
