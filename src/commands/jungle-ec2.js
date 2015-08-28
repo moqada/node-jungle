@@ -31,11 +31,11 @@ program.command('ls [name]')
   jungle.ec2.getInstances(name).then(instances => {
     instances.forEach(i => {
       const cols = [
-        getTagValue(i.Tags, 'Name') || null,
+        getTagValue(i.Tags, 'Name') || '',
         coloredStatus(i.State.Name),
         i.InstanceId,
-        i.PrivateIpAddress || null,
-        i.PublicIpAddress || null
+        i.PrivateIpAddress || '',
+        i.PublicIpAddress || ''
       ];
       console.log(cols.join('\t'));
     });
