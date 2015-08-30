@@ -13,11 +13,11 @@ const DEFAULT_TABLE_OPTIONS = {
     top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
     bottom: '', 'bottom-mid': '', 'bottom-left': ' ', 'bottom-right': ' ',
     left: ' ', 'left-mid': '',
-    mid: '-', 'mid-mid': '+',
+    mid: '-', 'mid-mid': ' ',
     right: '', 'right-mid': '',
-    middle: '|'
+    middle: ' '
   },
-  style: {compact: true, head: ['gray']}
+  style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}
 };
 
 const STATUS_STYLES = {
