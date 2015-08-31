@@ -6,12 +6,33 @@ const debug = debugModule('jungle:lib');
 
 export default class EC2 {
 
-  constructor(region) {
-    this._sdk = new AWS.EC2({region});
+  constructor(opts = {}) {
+    this._sdk = new AWS.EC2(opts);
   }
 
-  getInstances(name) {
-    const params = name ? {Filters: [{Name: 'tag:Name', Values: [name]}]} : {};
+  parseFilterOptions(name, stateName, rawFilters) {
+    let filters = [];
+    if (name) {
+      filters.push({
+        Name: 'tag:Name',
+        Values: Array.isArray(name) ? name : [name]
+      });
+    }
+    if (stateName) {
+      filters.push({
+        Name: 'instance-state-name',
+        Values: Array.isArray(stateName) ? stateName : [stateName]
+      });
+    }
+    if (rawFilters) {
+      filters = filters.concat(rawFilters);
+    }
+    return filters;
+  }
+
+  getInstances({name, stateName, rawFilters}) {
+    const Filters = this.parseFilterOptions(name, stateName, rawFilters);
+    const params = Filters.length > 0 ? {Filters} : [];
     debug('params', params);
     return new Promise((resolve, reject) => {
       this._sdk.describeInstances(params, (err, response) => {

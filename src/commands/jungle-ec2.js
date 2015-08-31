@@ -40,8 +40,8 @@ program.command('ls [name]')
 .description('List EC2 Instances')
 .option('-t, --table', 'Table style output')
 .action((name, options) => {
-  const jungle = new Jungle(options.parent.region);
-  jungle.ec2.getInstances(name).then(instances => {
+  const jungle = new Jungle({region: options.parent.region});
+  jungle.ec2.getInstances({name}).then(instances => {
     const rows = instances.map(i => {
       return [
         getTagValue(i.Tags, 'Name') || '',
