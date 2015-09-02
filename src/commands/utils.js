@@ -1,5 +1,19 @@
 import chalk from 'chalk';
 
+
+export const DEFAULT_TABLE_OPTIONS = {
+  chars: {
+    top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
+    bottom: '', 'bottom-mid': '', 'bottom-left': ' ', 'bottom-right': ' ',
+    left: ' ', 'left-mid': '',
+    mid: '-', 'mid-mid': ' ',
+    right: '', 'right-mid': '',
+    middle: ' '
+  },
+  style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}
+};
+
+
 export function defaultOutputHelp(program) {
   if (!process.argv.slice(2).length) {
     program.outputHelp();

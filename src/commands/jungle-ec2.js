@@ -2,24 +2,16 @@ import chalk from 'chalk';
 import Table from 'cli-table';
 import debugModule from 'debug';
 import program from 'commander';
-import {defaultOutputHelp, errorAndExit, noCommandAndExit} from './utils';
+import {
+  DEFAULT_TABLE_OPTIONS,
+  defaultOutputHelp,
+  errorAndExit,
+  noCommandAndExit
+} from './utils';
 import Jungle from '../';
 import {getTagValue} from '../utils';
 
 const debug = debugModule('jungle:cli');
-
-const DEFAULT_TABLE_OPTIONS = {
-  chars: {
-    top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
-    bottom: '', 'bottom-mid': '', 'bottom-left': ' ', 'bottom-right': ' ',
-    left: ' ', 'left-mid': '',
-    mid: '-', 'mid-mid': ' ',
-    right: '', 'right-mid': '',
-    middle: ' '
-  },
-  style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}
-};
-
 const STATUS_STYLES = {
   stopped: chalk.red,
   running: chalk.green,
