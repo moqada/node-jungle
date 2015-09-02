@@ -9,6 +9,7 @@ program
 
 program.command('ec2', 'EC2 Group');
 program.command('elb', 'ELB Group');
+program.command('rds', 'RDS Group');
 
 program.parse(process.argv);
 defaultOutputHelp(program);
