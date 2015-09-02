@@ -7,6 +7,7 @@ program
 .version(pkg.version)
 .description('AWS operation CLI');
 
+program.command('eb', 'EB Group');
 program.command('ec2', 'EC2 Group');
 program.command('elb', 'ELB Group');
 program.command('rds', 'RDS Group');
