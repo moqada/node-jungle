@@ -1,3 +1,4 @@
+import EB from './eb';
 import EC2 from './ec2';
 import RDS from './rds';
 
@@ -6,6 +7,13 @@ export default class Jungle {
 
   constructor(sdkCommonOpts = {}) {
     this.sdkCommonOpts = sdkCommonOpts;
+  }
+
+  get eb() {
+    if (!this._eb) {
+      this._eb = new EB(this.sdkCommonOpts);
+    }
+    return this._eb;
   }
 
   get ec2() {
