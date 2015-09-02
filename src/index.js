@@ -4,30 +4,20 @@ import RDS from './rds';
 
 export default class Jungle {
 
-  constructor({accessKeyId, secretAccessKey, region} = {}) {
-    this.region = region;
-    this.accessKeyId = accessKeyId;
-    this.secretAccessKey = secretAccessKey;
+  constructor(sdkCommonOpts = {}) {
+    this.sdkCommonOpts = sdkCommonOpts;
   }
 
   get ec2() {
     if (!this._ec2) {
-      this._ec2 = new EC2({
-        accessKeyId: this.accessKeyId,
-        secretAccessKey: this.secretAccessKey,
-        region: this.region
-      });
+      this._ec2 = new EC2(this.sdkCommonOpts);
     }
     return this._ec2;
   }
 
   get rds() {
     if (!this._rds) {
-      this._rds = new RDS({
-        accessKeyId: this.accessKeyId,
-        secretAccessKey: this.secretAccessKey,
-        region: this.region
-      });
+      this._rds = new RDS(this.sdkCommonOpts);
     }
     return this._rds;
   }
