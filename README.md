@@ -64,6 +64,12 @@ Filtering EC2 instances by Name tag using wildcard
 jungle ec2 ls '*web*'
 ```
 
+Listing EC2 instances and output table style
+
+```
+jungle ec2 ls -t
+```
+
 Starting instance
 
 ```
