@@ -51,6 +51,29 @@ jungle ec2 down i-xxxxxx
 ```
 
 
+### Elastic Beanstalk
+
+Listing all Elastic Beanstalk environments
+
+```
+jungle eb ls
+```
+
+`jungle eb ls` has same options as `jungle ec2 ls`.
+But, filtering target is EnvironmentName. 
+
+
+### RDS
+
+Listing all RDS instances
+
+```
+jungle rds ls
+```
+
+`jungle rds ls` has same options as `jungle ec2 ls`.
+But, filtering target is DB Indentifier.
+
 ## Configuration
 
 You can create the credential file yourself. By default, its location is at `~/.aws/credentials`
