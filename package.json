@@ -7,7 +7,7 @@
     "jungle": "bin/jungle"
   },
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "rm -rf lib && babel src --out-dir lib",
     "eslint": "eslint src",
     "test": "npm run eslint && npm run build && cd example && npm install && npm run jungle",
     "watch": "babel src --out-dir lib --watch"
