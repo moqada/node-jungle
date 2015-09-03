@@ -16,6 +16,32 @@ node.js port of [jungle](https://github.com/achiku/jungle)
 npm install -g node-jungle
 ```
 
+## Configuration
+
+You can create the credential file yourself. By default, its location is at `~/.aws/credentials`
+
+```
+[default]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+```
+
+You should be set specific region by [aws-sdk-js](https://github.com/aws/aws-sdk-js) restriction. You cannot use `~/.aws/config`.
+
+Environment variables:
+
+```
+export AWS_REGION=ap-northeast-1
+```
+
+Or
+
+`--region` or `-r` option per commands:
+
+```
+jungle ec2 ls --region=ap-northeast-1
+```
+
 ## Usage
 
 ### EC2
@@ -73,32 +99,6 @@ jungle rds ls
 
 `jungle rds ls` has same options as `jungle ec2 ls`.
 But, filtering target is DB Indentifier.
-
-## Configuration
-
-You can create the credential file yourself. By default, its location is at `~/.aws/credentials`
-
-```
-[default]
-aws_access_key_id = YOUR_ACCESS_KEY
-aws_secret_access_key = YOUR_SECRET_KEY
-```
-
-You should be set specific region by [aws-sdk-js](https://github.com/aws/aws-sdk-js) restriction. You cannot use `~/.aws/config`.
-
-Environment variables:
-
-```
-export AWS_REGION=ap-northeast-1
-```
-
-Or
-
-`--region` or `-r` option per commands:
-
-```
-jungle ec2 ls --region=ap-northeast-1
-```
 
 
 [npm-url]: https://www.npmjs.com/package/node-jungle
