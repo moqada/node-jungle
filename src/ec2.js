@@ -1,14 +1,10 @@
-import AWS from 'aws-sdk';
 import debugModule from 'debug';
+import Service from './service';
 
 const debug = debugModule('jungle:lib');
 
 
-export default class EC2 {
-
-  constructor(opts = {}) {
-    this._sdk = new AWS.EC2(opts);
-  }
+export default class EC2 extends Service {
 
   parseFilterOptions(name, stateName, rawFilters) {
     let filters = [];

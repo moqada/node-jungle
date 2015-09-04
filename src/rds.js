@@ -1,13 +1,11 @@
-import AWS from 'aws-sdk';
 import debugModule from 'debug';
 import minimatch from 'minimatch';
+import Service from './service';
 
 const debug = debugModule('jungle:lib');
 
-export default class RDS {
-  constructor(opts = {}) {
-    this._sdk = new AWS.RDS(opts);
-  }
+
+export default class RDS extends Service {
 
   getInstances({name, rawFilters} = {}) {
     const params = rawFilters || [];

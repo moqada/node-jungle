@@ -1,14 +1,14 @@
-import AWS from 'aws-sdk';
 import debugModule from 'debug';
 import {filterObjects} from './utils';
+import Service from './service';
 
 const debug = debugModule('jungle:lib');
 
 
-export default class EB {
+export default class EB extends Service {
 
-  constructor(opts = {}) {
-    this._sdk = new AWS.ElasticBeanstalk(opts);
+  static get SDKName() {
+    return 'ElasticBeanstalk';
   }
 
   getApplications({name, rawFilters} = {}) {
