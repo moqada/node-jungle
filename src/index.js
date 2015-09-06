@@ -1,6 +1,11 @@
+import AWS from 'aws-sdk';
+import loader from 'aws-sdk-config-loader';
+
 import EB from './eb';
 import EC2 from './ec2';
 import RDS from './rds';
+
+loader(AWS);
 
 
 export default class Jungle {
