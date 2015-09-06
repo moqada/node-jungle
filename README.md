@@ -26,21 +26,13 @@ aws_access_key_id = YOUR_ACCESS_KEY
 aws_secret_access_key = YOUR_SECRET_KEY
 ```
 
-You should be set specific region by [aws-sdk-js](https://github.com/aws/aws-sdk-js) restriction. You cannot use `~/.aws/config`.
-
-Environment variables:
+You may also want to set a default region. This can be done in the configuration file. By default, its location is at `~/.aws/config`
 
 ```
-export AWS_REGION=ap-northeast-1
+[default]
+region = us-east-1
 ```
 
-Or
-
-`--region` or `-r` option per commands:
-
-```
-jungle ec2 ls --region=ap-northeast-1
-```
 
 ## Usage
 
