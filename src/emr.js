@@ -10,7 +10,7 @@ export default class EMR extends Service {
   parseParamOptions(stateName, rawParams) {
     let params = {};
     if (stateName) {
-      params.ClusterStatus = Array.isArray(stateName) ? stateName : [stateName];
+      params.ClusterStates = Array.isArray(stateName) ? stateName : [stateName];
     }
     if (rawParams) {
       params = Object.assign(params, rawParams);
