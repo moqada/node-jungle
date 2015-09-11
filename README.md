@@ -100,14 +100,14 @@ But, filtering target is DB Indentifier.
 
 
 [npm-url]: https://www.npmjs.com/package/node-jungle
-[npm-image]: https://img.shields.io/npm/v/node-jungle.svg
+[npm-image]: https://img.shields.io/npm/v/node-jungle.svg?style=flat-square
 [npm-download-url]: https://www.npmjs.com/package/node-jungle
-[npm-download-image]: https://img.shields.io/npm/dm/node-jungle.svg
+[npm-download-image]: https://img.shields.io/npm/dm/node-jungle.svg?style=flat-square
 [travis-url]: https://travis-ci.org/moqada/node-jungle
-[travis-image]: https://img.shields.io/travis/moqada/node-jungle.svg
+[travis-image]: https://img.shields.io/travis/moqada/node-jungle.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/moqada/node-jungle
-[daviddm-image]: https://img.shields.io/david/moqada/node-jungle.svg
+[daviddm-image]: https://img.shields.io/david/moqada/node-jungle.svg?style=flat-square
 [daviddm-dev-url]: https://david-dm.org/moqada/node-jungle#info=devDependencies
-[daviddm-dev-image]: https://img.shields.io/david/dev/moqada/node-jungle.svg
+[daviddm-dev-image]: https://img.shields.io/david/dev/moqada/node-jungle.svg?style=flat-square
 [license-url]: http://opensource.org/licenses/MIT
-[license-image]: https://img.shields.io/npm/l/node-jungle.svg
+[license-image]: https://img.shields.io/npm/l/node-jungle.svg?style=flat-square
