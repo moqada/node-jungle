@@ -87,6 +87,18 @@ jungle eb ls
 But, filtering target is EnvironmentName. 
 
 
+### Elastic MapReduce
+
+Listing all Elastic MapReduce Clusters
+
+```
+jungle emr ls
+```
+
+`jungle emr ls` has same options as `jungle ec2 ls`.
+But, filtering target is Name.
+
+
 ### RDS
 
 Listing all RDS instances
