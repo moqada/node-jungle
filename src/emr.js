@@ -7,8 +7,19 @@ const debug = debugModule('jungle:lib');
 
 export default class EMR extends Service {
 
-  getClusters({name, rawFilters} = {}) {
-    const params = rawFilters || {};
+  parseParamOptions(stateName, rawParams) {
+    let params = {};
+    if (stateName) {
+      params.ClusterStatus = Array.isArray(stateName) ? stateName : [stateName];
+    }
+    if (rawParams) {
+      params = Object.assign(params, rawParams);
+    }
+    return params;
+  }
+
+  getClusters({name, stateName, rawParams} = {}) {
+    const params = this.parseParamOptions(stateName, rawParams);
     debug('params', params);
     return new Promise((resolve, reject) => {
       this._sdk.listClusters(params, (err, response) => {
