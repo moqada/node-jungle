@@ -9,6 +9,7 @@ program
 
 program.command('eb', 'EB Group');
 program.command('ec2', 'EC2 Group');
+program.command('emr', 'EMR Group');
 program.command('elb', 'ELB Group');
 program.command('rds', 'RDS Group');
 

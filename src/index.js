@@ -3,6 +3,7 @@ import loader from 'aws-sdk-config-loader';
 
 import EB from './eb';
 import EC2 from './ec2';
+import EMR from './emr';
 import RDS from './rds';
 
 loader(AWS);
@@ -26,6 +27,13 @@ export default class Jungle {
       this._ec2 = new EC2(this.sdkCommonOpts);
     }
     return this._ec2;
+  }
+
+  get emr() {
+    if (!this._emr) {
+      this._emr = new EMR(this.sdkCommonOpts);
+    }
+    return this._emr;
   }
 
   get rds() {
