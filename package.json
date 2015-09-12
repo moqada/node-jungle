@@ -1,6 +1,6 @@
 {
   "name": "node-jungle",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "AWS operations by cli should be simpler",
   "main": "lib/index.js",
   "bin": {
