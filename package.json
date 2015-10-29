@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/moqada/node-jungle#readme",
   "dependencies": {
-    "aws-sdk": "^2.1.47",
+    "aws-sdk": "^2.2.13",
     "aws-sdk-config-loader": "^0.1.0",
     "babel-runtime": "^5.8.20",
     "chalk": "^1.1.1",
