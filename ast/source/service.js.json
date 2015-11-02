@@ -1,0 +1,730 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ImportDeclaration",
+      "specifiers": [
+        {
+          "type": "ImportDefaultSpecifier",
+          "local": {
+            "type": "Identifier",
+            "name": "AWS",
+            "range": [
+              7,
+              10
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 7
+              },
+              "end": {
+                "line": 1,
+                "column": 10
+              }
+            }
+          },
+          "range": [
+            7,
+            10
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "line": 1,
+              "column": 10
+            }
+          }
+        }
+      ],
+      "source": {
+        "type": "Literal",
+        "value": "aws-sdk",
+        "raw": "'aws-sdk'",
+        "range": [
+          16,
+          25
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 16
+          },
+          "end": {
+            "line": 1,
+            "column": 25
+          }
+        }
+      },
+      "range": [
+        0,
+        26
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": "ExportDefaultDeclaration",
+      "declaration": {
+        "type": "ClassDeclaration",
+        "id": {
+          "type": "Identifier",
+          "name": "Service",
+          "range": [
+            50,
+            57
+          ],
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 21
+            },
+            "end": {
+              "line": 4,
+              "column": 28
+            }
+          }
+        },
+        "superClass": null,
+        "body": {
+          "type": "ClassBody",
+          "body": [
+            {
+              "type": "MethodDefinition",
+              "key": {
+                "type": "Identifier",
+                "name": "constructor",
+                "range": [
+                  62,
+                  73
+                ],
+                "loc": {
+                  "start": {
+                    "line": 5,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 5,
+                    "column": 13
+                  }
+                }
+              },
+              "value": {
+                "type": "FunctionExpression",
+                "id": null,
+                "params": [
+                  {
+                    "type": "AssignmentPattern",
+                    "left": {
+                      "type": "Identifier",
+                      "name": "opts",
+                      "range": [
+                        74,
+                        78
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 5,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 18
+                        }
+                      }
+                    },
+                    "right": {
+                      "type": "ObjectExpression",
+                      "properties": [],
+                      "range": [
+                        81,
+                        83
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 5,
+                          "column": 21
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 23
+                        }
+                      }
+                    },
+                    "range": [
+                      74,
+                      83
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 5,
+                        "column": 14
+                      },
+                      "end": {
+                        "line": 5,
+                        "column": 23
+                      }
+                    }
+                  }
+                ],
+                "body": {
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "type": "VariableDeclaration",
+                      "declarations": [
+                        {
+                          "type": "VariableDeclarator",
+                          "id": {
+                            "type": "Identifier",
+                            "name": "sdkName",
+                            "range": [
+                              97,
+                              104
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 6,
+                                "column": 10
+                              },
+                              "end": {
+                                "line": 6,
+                                "column": 17
+                              }
+                            }
+                          },
+                          "init": {
+                            "type": "LogicalExpression",
+                            "operator": "||",
+                            "left": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "range": [
+                                    107,
+                                    111
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 20
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 24
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "constructor",
+                                  "range": [
+                                    112,
+                                    123
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 25
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 36
+                                    }
+                                  }
+                                },
+                                "range": [
+                                  107,
+                                  123
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 6,
+                                    "column": 20
+                                  },
+                                  "end": {
+                                    "line": 6,
+                                    "column": 36
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "SDKName",
+                                "range": [
+                                  124,
+                                  131
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 6,
+                                    "column": 37
+                                  },
+                                  "end": {
+                                    "line": 6,
+                                    "column": 44
+                                  }
+                                }
+                              },
+                              "range": [
+                                107,
+                                131
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 6,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 6,
+                                  "column": 44
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "computed": false,
+                              "object": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "range": [
+                                    135,
+                                    139
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 48
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 52
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "constructor",
+                                  "range": [
+                                    140,
+                                    151
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 53
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 64
+                                    }
+                                  }
+                                },
+                                "range": [
+                                  135,
+                                  151
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 6,
+                                    "column": 48
+                                  },
+                                  "end": {
+                                    "line": 6,
+                                    "column": 64
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "name",
+                                "range": [
+                                  152,
+                                  156
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 6,
+                                    "column": 65
+                                  },
+                                  "end": {
+                                    "line": 6,
+                                    "column": 69
+                                  }
+                                }
+                              },
+                              "range": [
+                                135,
+                                156
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 6,
+                                  "column": 48
+                                },
+                                "end": {
+                                  "line": 6,
+                                  "column": 69
+                                }
+                              }
+                            },
+                            "range": [
+                              107,
+                              156
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 6,
+                                "column": 20
+                              },
+                              "end": {
+                                "line": 6,
+                                "column": 69
+                              }
+                            }
+                          },
+                          "range": [
+                            97,
+                            156
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 6,
+                              "column": 10
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 69
+                            }
+                          }
+                        }
+                      ],
+                      "kind": "const",
+                      "range": [
+                        91,
+                        157
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 6,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 70
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "type": "ThisExpression",
+                            "range": [
+                              162,
+                              166
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 4
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 8
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "_sdk",
+                            "range": [
+                              167,
+                              171
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 9
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 13
+                              }
+                            }
+                          },
+                          "range": [
+                            162,
+                            171
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 7,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 13
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "NewExpression",
+                          "callee": {
+                            "type": "MemberExpression",
+                            "computed": true,
+                            "object": {
+                              "type": "Identifier",
+                              "name": "AWS",
+                              "range": [
+                                178,
+                                181
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 23
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "sdkName",
+                              "range": [
+                                182,
+                                189
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 24
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 31
+                                }
+                              }
+                            },
+                            "range": [
+                              178,
+                              190
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 20
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 32
+                              }
+                            }
+                          },
+                          "arguments": [
+                            {
+                              "type": "Identifier",
+                              "name": "opts",
+                              "range": [
+                                191,
+                                195
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 33
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 37
+                                }
+                              }
+                            }
+                          ],
+                          "range": [
+                            174,
+                            196
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 7,
+                              "column": 16
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 38
+                            }
+                          }
+                        },
+                        "range": [
+                          162,
+                          196
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 7,
+                            "column": 4
+                          },
+                          "end": {
+                            "line": 7,
+                            "column": 38
+                          }
+                        }
+                      },
+                      "range": [
+                        162,
+                        197
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 7,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 39
+                        }
+                      }
+                    }
+                  ],
+                  "range": [
+                    85,
+                    201
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 5,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 3
+                    }
+                  }
+                },
+                "generator": false,
+                "expression": false,
+                "range": [
+                  73,
+                  201
+                ],
+                "loc": {
+                  "start": {
+                    "line": 5,
+                    "column": 13
+                  },
+                  "end": {
+                    "line": 8,
+                    "column": 3
+                  }
+                }
+              },
+              "kind": "constructor",
+              "computed": false,
+              "range": [
+                62,
+                201
+              ],
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 2
+                },
+                "end": {
+                  "line": 8,
+                  "column": 3
+                }
+              },
+              "static": false
+            }
+          ],
+          "range": [
+            58,
+            203
+          ],
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 29
+            },
+            "end": {
+              "line": 9,
+              "column": 1
+            }
+          }
+        },
+        "range": [
+          44,
+          203
+        ],
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 15
+          },
+          "end": {
+            "line": 9,
+            "column": 1
+          }
+        },
+        "leadingComments": [],
+        "trailingComments": []
+      },
+      "range": [
+        29,
+        203
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 9,
+          "column": 1
+        }
+      }
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    0,
+    203
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 9,
+      "column": 1
+    }
+  },
+  "comments": []
+}

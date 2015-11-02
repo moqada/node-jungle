@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/commands/utils.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/moqada/node-jungle.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/eb.js~EB.html">EB</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/ec2.js~EC2.html">EC2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/emr.js~EMR.html">EMR</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Jungle.html">Jungle</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/rds.js~RDS.html">RDS</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/service.js~Service.html">Service</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-filterObjects">filterObjects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getTagValue">getTagValue</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">commands</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-defaultOutputHelp">defaultOutputHelp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorAndExit">errorAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-noCommandAndExit">noCommandAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_TABLE_OPTIONS">DEFAULT_TABLE_OPTIONS</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/commands/utils.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import chalk from &apos;chalk&apos;;
+
+
+export const DEFAULT_TABLE_OPTIONS = {
+  chars: {
+    top: &apos;&apos;, &apos;top-mid&apos;: &apos;&apos;, &apos;top-left&apos;: &apos;&apos;, &apos;top-right&apos;: &apos;&apos;,
+    bottom: &apos;&apos;, &apos;bottom-mid&apos;: &apos;&apos;, &apos;bottom-left&apos;: &apos; &apos;, &apos;bottom-right&apos;: &apos; &apos;,
+    left: &apos; &apos;, &apos;left-mid&apos;: &apos;&apos;,
+    mid: &apos;-&apos;, &apos;mid-mid&apos;: &apos; &apos;,
+    right: &apos;&apos;, &apos;right-mid&apos;: &apos;&apos;,
+    middle: &apos; &apos;
+  },
+  style: {compact: true, head: [&apos;gray&apos;], &apos;padding-right&apos;: 0, &apos;padding-left&apos;: 0}
+};
+
+
+/**
+ * Output help
+ *
+ * @param {Object} program commander object
+ */
+export function defaultOutputHelp(program) {
+  if (!process.argv.slice(2).length) {
+    program.outputHelp();
+  }
+}
+
+/**
+ * Exit code 1 when raised error
+ *
+ * @param {Error|string} error error
+ */
+export function errorAndExit(error) {
+  console.log(chalk.red(error));
+  process.exit(1);
+}
+
+/**
+ * Output error message when unknown sub commands
+ *
+ * @param {string} name sub command name
+ * @return {Function}
+ */
+export function noCommandAndExit(name) {
+  return cmd =&gt; {
+    const msg = `${name}: &apos;${cmd}&apos; is not a ${name} command. See &apos;${name} --help&apos;.`;
+    console.error(chalk.red(msg));
+    process.exit(1);
+  };
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

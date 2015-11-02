@@ -1,0 +1,62 @@
+{
+  "coverage": "62.06%",
+  "expectCount": 29,
+  "actualCount": 18,
+  "files": {
+    "src/commands/utils.js": {
+      "expectCount": 4,
+      "actualCount": 3,
+      "undocumentLines": [
+        4
+      ]
+    },
+    "src/eb.js": {
+      "expectCount": 4,
+      "actualCount": 3,
+      "undocumentLines": [
+        13
+      ]
+    },
+    "src/ec2.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "src/emr.js": {
+      "expectCount": 3,
+      "actualCount": 3,
+      "undocumentLines": []
+    },
+    "src/index.js": {
+      "expectCount": 7,
+      "actualCount": 0,
+      "undocumentLines": [
+        12,
+        14,
+        18,
+        25,
+        32,
+        39,
+        15
+      ]
+    },
+    "src/rds.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    },
+    "src/service.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5
+      ]
+    },
+    "src/utils.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    }
+  }
+}

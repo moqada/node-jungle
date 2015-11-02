@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/moqada/node-jungle.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/eb.js~EB.html">EB</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/ec2.js~EC2.html">EC2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/emr.js~EMR.html">EMR</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Jungle.html">Jungle</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/rds.js~RDS.html">RDS</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/service.js~Service.html">Service</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-filterObjects">filterObjects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getTagValue">getTagValue</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">commands</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-defaultOutputHelp">defaultOutputHelp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorAndExit">errorAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-noCommandAndExit">noCommandAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_TABLE_OPTIONS">DEFAULT_TABLE_OPTIONS</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="node-jungle">node-jungle</h1>
+<p><a href="https://www.npmjs.com/package/node-jungle"><img src="https://img.shields.io/npm/v/node-jungle.svg?style=flat-square" alt="NPM version"></a>
+<a href="https://www.npmjs.com/package/node-jungle"><img src="https://img.shields.io/npm/dt/node-jungle.svg?style=flat-square" alt="NPM downloads"></a>
+<a href="https://travis-ci.org/moqada/node-jungle"><img src="https://img.shields.io/travis/moqada/node-jungle.svg?style=flat-square" alt="Build Status"></a>
+<a href="https://david-dm.org/moqada/node-jungle"><img src="https://img.shields.io/david/moqada/node-jungle.svg?style=flat-square" alt="Dependency Status"></a>
+<a href="https://david-dm.org/moqada/node-jungle#info=devDependencies"><img src="https://img.shields.io/david/dev/moqada/node-jungle.svg?style=flat-square" alt="DevDependency Status"></a>
+<a href="http://opensource.org/licenses/MIT"><img src="https://img.shields.io/npm/l/node-jungle.svg?style=flat-square" alt="License"></a></p>
+<p>node.js port of <a href="https://github.com/achiku/jungle">jungle</a></p>
+<h2 id="installation">Installation</h2>
+<pre><code><code class="source-code prettyprint">npm install -g node-jungle</code>
+</code></pre><h2 id="configuration">Configuration</h2>
+<p>You can create the credential file yourself. By default, its location is at <code>~/.aws/credentials</code></p>
+<pre><code><code class="source-code prettyprint">[default]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY</code>
+</code></pre><p>You may also want to set a default region. This can be done in the configuration file. By default, its location is at <code>~/.aws/config</code></p>
+<pre><code><code class="source-code prettyprint">[default]
+region = us-east-1</code>
+</code></pre><h2 id="usage">Usage</h2>
+<h3 id="ec2">EC2</h3>
+<p>Listing all EC2 instances</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 ls</code>
+</code></pre><p>Filtering EC2 instances by Name tag</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 ls blog-web-server-01</code>
+</code></pre><p>Filtering EC2 instances by Name tag using wildcard</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 ls &apos;*web*&apos;</code>
+</code></pre><p>Listing EC2 instances and output table style</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 ls -t</code>
+</code></pre><p>Starting instance</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 up i-xxxxxx</code>
+</code></pre><p>Stopping instance</p>
+<pre><code><code class="source-code prettyprint">jungle ec2 down i-xxxxxx</code>
+</code></pre><h3 id="elastic-beanstalk">Elastic Beanstalk</h3>
+<p>Listing all Elastic Beanstalk environments</p>
+<pre><code><code class="source-code prettyprint">jungle eb ls</code>
+</code></pre><p><code>jungle eb ls</code> has same options as <code>jungle ec2 ls</code>.
+But, filtering target is EnvironmentName. </p>
+<h3 id="elastic-mapreduce">Elastic MapReduce</h3>
+<p>Listing all Elastic MapReduce Clusters</p>
+<pre><code><code class="source-code prettyprint">jungle emr ls</code>
+</code></pre><p><code>jungle emr ls</code> has same options as <code>jungle ec2 ls</code>.
+But, filtering target is Name.</p>
+<h3 id="rds">RDS</h3>
+<p>Listing all RDS instances</p>
+<pre><code><code class="source-code prettyprint">jungle rds ls</code>
+</code></pre><p><code>jungle rds ls</code> has same options as <code>jungle ec2 ls</code>.
+But, filtering target is DB Indentifier.</p>
+<h2 id="todo">Todo</h2>
+<ul>
+<li>[ ] Add ec2 ssh command</li>
+<li>[ ] Add ELB Sub commands</li>
+<li>[ ] Refactor Internal libs</li>
+<li>[x] Add docs</li>
+<li>[ ] Add tests</li>
+</ul>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

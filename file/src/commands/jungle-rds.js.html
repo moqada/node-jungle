@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/commands/jungle-rds.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/moqada/node-jungle.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/eb.js~EB.html">EB</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/ec2.js~EC2.html">EC2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/emr.js~EMR.html">EMR</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Jungle.html">Jungle</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/rds.js~RDS.html">RDS</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/service.js~Service.html">Service</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-filterObjects">filterObjects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getTagValue">getTagValue</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">commands</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-defaultOutputHelp">defaultOutputHelp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorAndExit">errorAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-noCommandAndExit">noCommandAndExit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEFAULT_TABLE_OPTIONS">DEFAULT_TABLE_OPTIONS</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/commands/jungle-rds.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import chalk from &apos;chalk&apos;;
+import Table from &apos;cli-table&apos;;
+import program from &apos;commander&apos;;
+import {
+  DEFAULT_TABLE_OPTIONS,
+  defaultOutputHelp,
+  errorAndExit,
+  noCommandAndExit
+} from &apos;./utils&apos;;
+import Jungle from &apos;../&apos;;
+
+const STATUS_STYLES = {
+  available: chalk.green,
+  &apos;*&apos;: chalk.gray.dim
+};
+
+
+/**
+ * Colorized by state name
+ *
+ * @param {string} stateName state name
+ * @return {string}
+ */
+function coloredStatus(stateName) {
+  const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES[&apos;*&apos;];
+  return statusStyle(stateName);
+}
+
+
+program.option(&apos;-r, --region &lt;name&gt;&apos;, &apos;Region name&apos;);
+program.action(noCommandAndExit(&apos;jungle rds&apos;));
+
+program.command(&apos;ls [name]&apos;)
+.description(&apos;List RDS DB Instances&apos;)
+.option(&apos;-t, --table&apos;, &apos;Table style output&apos;)
+.action((name, options) =&gt; {
+  const jungle = new Jungle({region: options.parent.region});
+  jungle.rds.getInstances({name}).then(instances =&gt; {
+    const rows = instances.map(i =&gt; {
+      return [
+        i.DBInstanceIdentifier,
+        coloredStatus(i.DBInstanceStatus),
+        i.Engine,
+        i.DBInstanceClass,
+        i.DBSubnetGroup.DBSubnetGroupName
+      ];
+    });
+    if (options.table) {
+      const table = new Table(Object.assign({
+        head: [&apos;Identifier&apos;, &apos;State&apos;, &apos;Engine&apos;, &apos;Class&apos;, &apos;Subnet&apos;]
+      }, DEFAULT_TABLE_OPTIONS));
+      table.push(...rows);
+      console.log(table.toString());
+    } else {
+      rows.forEach(row =&gt; console.log(row.join(&apos;\t&apos;)));
+    }
+  }).catch(errorAndExit);
+});
+
+program.parse(process.argv);
+defaultOutputHelp(program);
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

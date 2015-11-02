@@ -1,0 +1,2225 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/jungle-eb.js",
+    "memberof": null,
+    "longname": "src/commands/jungle-eb.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import chalk from 'chalk';\nimport Table from 'cli-table';\nimport program from 'commander';\nimport {\n  DEFAULT_TABLE_OPTIONS,\n  defaultOutputHelp,\n  errorAndExit,\n  noCommandAndExit\n} from './utils';\nimport Jungle from '../';\n\nconst STATUS_STYLES = {\n  Green: chalk.green,\n  '*': chalk.gray.dim\n};\n\n\n/**\n * Colorized by state name\n *\n * @param {string} stateName state name\n * @return {string}\n */\nfunction coloredStatus(stateName) {\n  const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES['*'];\n  return statusStyle(stateName);\n}\n\n\nprogram.option('-r, --region <name>', 'Region name');\nprogram.action(noCommandAndExit('jungle eb'));\n\nprogram.command('ls [name]')\n.description('List ElasticBeanstalk Environments')\n.option('-t, --table', 'Table style output')\n.action((name, options) => {\n  const jungle = new Jungle({region: options.parent.region});\n  jungle.eb.getEnvironments({name}).then(environments => {\n    const rows = environments.map(e => {\n      return [\n        e.EnvironmentName,\n        e.ApplicationName,\n        coloredStatus(e.Health),\n        e.CNAME\n      ];\n    });\n    if (options.table) {\n      const table = new Table(Object.assign({\n        head: ['Name', 'App', 'Health', 'CNAME']\n      }, DEFAULT_TABLE_OPTIONS));\n      table.push(...rows);\n      console.log(table.toString());\n    } else {\n      rows.forEach(row => console.log(row.join('\\t')));\n    }\n  }).catch(errorAndExit);\n});\n\nprogram.parse(process.argv);\ndefaultOutputHelp(program);\n"
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "STATUS_STYLES",
+    "memberof": "src/commands/jungle-eb.js",
+    "longname": "src/commands/jungle-eb.js~STATUS_STYLES",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-eb.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "coloredStatus",
+    "memberof": "src/commands/jungle-eb.js",
+    "longname": "src/commands/jungle-eb.js~coloredStatus",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-eb.js",
+    "importStyle": null,
+    "description": "Colorized by state name",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state name"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 3,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/jungle-ec2.js",
+    "memberof": null,
+    "longname": "src/commands/jungle-ec2.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import chalk from 'chalk';\nimport Table from 'cli-table';\nimport debugModule from 'debug';\nimport program from 'commander';\nimport {\n  DEFAULT_TABLE_OPTIONS,\n  defaultOutputHelp,\n  errorAndExit,\n  noCommandAndExit\n} from './utils';\nimport Jungle from '../';\nimport {getTagValue} from '../utils';\n\nconst debug = debugModule('jungle:cli');\nconst STATUS_STYLES = {\n  stopped: chalk.red,\n  running: chalk.green,\n  '*': chalk.gray.dim\n};\n\n\n/**\n * Colorized by state name\n *\n * @param {string} stateName state name\n * @return {string}\n */\nfunction coloredStatus(stateName) {\n  const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES['*'];\n  return statusStyle(stateName);\n}\n\n\nprogram.option('-r, --region <name>', 'Region name');\nprogram.action(noCommandAndExit('jungle ec2'));\n\nprogram.command('ls [name]')\n.description('List EC2 Instances')\n.option('-t, --table', 'Table style output')\n.action((name, options) => {\n  const jungle = new Jungle({region: options.parent.region});\n  jungle.ec2.getInstances({name}).then(instances => {\n    const rows = instances.map(i => {\n      return [\n        getTagValue(i.Tags, 'Name') || '',\n        coloredStatus(i.State.Name),\n        i.InstanceId,\n        i.PrivateIpAddress || '',\n        i.PublicIpAddress || ''\n      ];\n    });\n    if (options.table) {\n      const table = new Table(Object.assign({\n        head: ['Name', 'State', 'InstanceId', 'PrivateIp', 'PublicIp']\n      }, DEFAULT_TABLE_OPTIONS));\n      table.push(...rows);\n      console.log(table.toString());\n    } else {\n      rows.forEach(row => console.log(row.join('\\t')));\n    }\n  }).catch(errorAndExit);\n});\n\nprogram.command('up <instanceId>')\n.description('Start EC2 instance')\n.option('--dry-run', 'dryrun')\n.action((instanceId, options) => {\n  debug(instanceId);\n  debug(options.opts());\n  const jungle = new Jungle(options.parent.region);\n  jungle.ec2.startInstances([instanceId], options.dryRun).then(result => {\n    const ids = result.Instances.map(i => i.InstanceId);\n    debug(`starting ${ids.join(', ')}...`);\n  }).catch(errorAndExit);\n});\n\nprogram.command('down <instanceId>')\n.description('Stop EC2 instance')\n.option('--dry-run', 'dryrun')\n.action((instanceId, options) => {\n  debug(instanceId);\n  debug(options.opts());\n  const jungle = new Jungle(options.parent.region);\n  jungle.ec2.stopInstances([instanceId], options.dryRun).then(result => {\n    const ids = result.Instances.map(i => i.InstanceId);\n    debug(`starting ${ids.join(', ')}...`);\n  }).catch(errorAndExit);\n});\n\nprogram.parse(process.argv);\ndefaultOutputHelp(program);\n"
+  },
+  {
+    "__docId__": 4,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debug",
+    "memberof": "src/commands/jungle-ec2.js",
+    "longname": "src/commands/jungle-ec2.js~debug",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-ec2.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "STATUS_STYLES",
+    "memberof": "src/commands/jungle-ec2.js",
+    "longname": "src/commands/jungle-ec2.js~STATUS_STYLES",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-ec2.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "coloredStatus",
+    "memberof": "src/commands/jungle-ec2.js",
+    "longname": "src/commands/jungle-ec2.js~coloredStatus",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-ec2.js",
+    "importStyle": null,
+    "description": "Colorized by state name",
+    "lineNumber": 28,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state name"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 7,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/jungle-emr.js",
+    "memberof": null,
+    "longname": "src/commands/jungle-emr.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import chalk from 'chalk';\nimport Table from 'cli-table';\nimport program from 'commander';\nimport {\n  DEFAULT_TABLE_OPTIONS,\n  defaultOutputHelp,\n  errorAndExit,\n  noCommandAndExit\n} from './utils';\nimport Jungle from '../';\n\nconst STATUS_STYLES = {\n  RUNNING: chalk.green,\n  STARTING: chalk.green,\n  BOOTSTRAPPING: chalk.green,\n  WAITING: chalk.green,\n  TERMINATED_WITH_ERRORS: chalk.red,\n  '*': chalk.gray.dim\n};\n\n\n/**\n * Colorized by state name\n *\n * @param {string} stateName state name\n * @return {string}\n */\nfunction coloredStatus(stateName) {\n  const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES['*'];\n  return statusStyle(stateName);\n}\n\n\nprogram.option('-r, --region <name>', 'Region name');\nprogram.action(noCommandAndExit('jungle emr'));\n\nprogram.command('ls [name]')\n.description('List Elastic Mapreduce Clusters')\n.option('-t, --table', 'Table style output')\n.action((name, options) => {\n  const jungle = new Jungle({region: options.parent.region});\n  jungle.emr.getClusters({name}).then(clusters => {\n    const rows = clusters.map(e => {\n      return [\n        e.Name,\n        e.Id,\n        coloredStatus(e.Status.State)\n      ];\n    });\n    if (options.table) {\n      const table = new Table(Object.assign({\n        head: ['Name', 'Id', 'Status']\n      }, DEFAULT_TABLE_OPTIONS));\n      table.push(...rows);\n      console.log(table.toString());\n    } else {\n      rows.forEach(row => console.log(row.join('\\t')));\n    }\n  }).catch(errorAndExit);\n});\n\nprogram.parse(process.argv);\ndefaultOutputHelp(program);\n"
+  },
+  {
+    "__docId__": 8,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "STATUS_STYLES",
+    "memberof": "src/commands/jungle-emr.js",
+    "longname": "src/commands/jungle-emr.js~STATUS_STYLES",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-emr.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "coloredStatus",
+    "memberof": "src/commands/jungle-emr.js",
+    "longname": "src/commands/jungle-emr.js~coloredStatus",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-emr.js",
+    "importStyle": null,
+    "description": "Colorized by state name",
+    "lineNumber": 28,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state name"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 10,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/jungle-rds.js",
+    "memberof": null,
+    "longname": "src/commands/jungle-rds.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import chalk from 'chalk';\nimport Table from 'cli-table';\nimport program from 'commander';\nimport {\n  DEFAULT_TABLE_OPTIONS,\n  defaultOutputHelp,\n  errorAndExit,\n  noCommandAndExit\n} from './utils';\nimport Jungle from '../';\n\nconst STATUS_STYLES = {\n  available: chalk.green,\n  '*': chalk.gray.dim\n};\n\n\n/**\n * Colorized by state name\n *\n * @param {string} stateName state name\n * @return {string}\n */\nfunction coloredStatus(stateName) {\n  const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES['*'];\n  return statusStyle(stateName);\n}\n\n\nprogram.option('-r, --region <name>', 'Region name');\nprogram.action(noCommandAndExit('jungle rds'));\n\nprogram.command('ls [name]')\n.description('List RDS DB Instances')\n.option('-t, --table', 'Table style output')\n.action((name, options) => {\n  const jungle = new Jungle({region: options.parent.region});\n  jungle.rds.getInstances({name}).then(instances => {\n    const rows = instances.map(i => {\n      return [\n        i.DBInstanceIdentifier,\n        coloredStatus(i.DBInstanceStatus),\n        i.Engine,\n        i.DBInstanceClass,\n        i.DBSubnetGroup.DBSubnetGroupName\n      ];\n    });\n    if (options.table) {\n      const table = new Table(Object.assign({\n        head: ['Identifier', 'State', 'Engine', 'Class', 'Subnet']\n      }, DEFAULT_TABLE_OPTIONS));\n      table.push(...rows);\n      console.log(table.toString());\n    } else {\n      rows.forEach(row => console.log(row.join('\\t')));\n    }\n  }).catch(errorAndExit);\n});\n\nprogram.parse(process.argv);\ndefaultOutputHelp(program);\n"
+  },
+  {
+    "__docId__": 11,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "STATUS_STYLES",
+    "memberof": "src/commands/jungle-rds.js",
+    "longname": "src/commands/jungle-rds.js~STATUS_STYLES",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-rds.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "coloredStatus",
+    "memberof": "src/commands/jungle-rds.js",
+    "longname": "src/commands/jungle-rds.js~coloredStatus",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/commands/jungle-rds.js",
+    "importStyle": null,
+    "description": "Colorized by state name",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state name"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 13,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/jungle.js",
+    "memberof": null,
+    "longname": "src/commands/jungle.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import program from 'commander';\nimport pkg from '../../package.json';\nimport {defaultOutputHelp} from './utils';\n\n\nprogram\n.version(pkg.version)\n.description('AWS operation CLI');\n\nprogram.command('eb', 'EB Group');\nprogram.command('ec2', 'EC2 Group');\nprogram.command('emr', 'EMR Group');\nprogram.command('elb', 'ELB Group');\nprogram.command('rds', 'RDS Group');\n\nprogram.parse(process.argv);\ndefaultOutputHelp(program);\n"
+  },
+  {
+    "__docId__": 14,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/commands/utils.js",
+    "memberof": null,
+    "longname": "src/commands/utils.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import chalk from 'chalk';\n\n\nexport const DEFAULT_TABLE_OPTIONS = {\n  chars: {\n    top: '', 'top-mid': '', 'top-left': '', 'top-right': '',\n    bottom: '', 'bottom-mid': '', 'bottom-left': ' ', 'bottom-right': ' ',\n    left: ' ', 'left-mid': '',\n    mid: '-', 'mid-mid': ' ',\n    right: '', 'right-mid': '',\n    middle: ' '\n  },\n  style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}\n};\n\n\n/**\n * Output help\n *\n * @param {Object} program commander object\n */\nexport function defaultOutputHelp(program) {\n  if (!process.argv.slice(2).length) {\n    program.outputHelp();\n  }\n}\n\n/**\n * Exit code 1 when raised error\n *\n * @param {Error|string} error error\n */\nexport function errorAndExit(error) {\n  console.log(chalk.red(error));\n  process.exit(1);\n}\n\n/**\n * Output error message when unknown sub commands\n *\n * @param {string} name sub command name\n * @return {Function}\n */\nexport function noCommandAndExit(name) {\n  return cmd => {\n    const msg = `${name}: '${cmd}' is not a ${name} command. See '${name} --help'.`;\n    console.error(chalk.red(msg));\n    process.exit(1);\n  };\n}\n"
+  },
+  {
+    "__docId__": 15,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "DEFAULT_TABLE_OPTIONS",
+    "memberof": "src/commands/utils.js",
+    "longname": "src/commands/utils.js~DEFAULT_TABLE_OPTIONS",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/commands/utils.js",
+    "importStyle": "{DEFAULT_TABLE_OPTIONS}",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "defaultOutputHelp",
+    "memberof": "src/commands/utils.js",
+    "longname": "src/commands/utils.js~defaultOutputHelp",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/commands/utils.js",
+    "importStyle": "{defaultOutputHelp}",
+    "description": "Output help",
+    "lineNumber": 22,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "program",
+        "description": "commander object"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 17,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "errorAndExit",
+    "memberof": "src/commands/utils.js",
+    "longname": "src/commands/utils.js~errorAndExit",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/commands/utils.js",
+    "importStyle": "{errorAndExit}",
+    "description": "Exit code 1 when raised error",
+    "lineNumber": 33,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Error",
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "error",
+        "description": "error"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 18,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "noCommandAndExit",
+    "memberof": "src/commands/utils.js",
+    "longname": "src/commands/utils.js~noCommandAndExit",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/commands/utils.js",
+    "importStyle": "{noCommandAndExit}",
+    "description": "Output error message when unknown sub commands",
+    "lineNumber": 44,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "name",
+        "description": "sub command name"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Function"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 19,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/eb.js",
+    "memberof": null,
+    "longname": "src/eb.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import debugModule from 'debug';\nimport {filterObjects} from './utils';\nimport Service from './service';\n\nconst debug = debugModule('jungle:lib');\n\n\n/**\n * ElasticBeanstalk\n */\nexport default class EB extends Service {\n\n  static get SDKName() {\n    return 'ElasticBeanstalk';\n  }\n\n  /**\n   * Return Application list\n   *\n   * @param {string} [name] application name\n   * @param {Object} [rawFilters] filter for params\n   * @return {Promise}\n   */\n  getApplications({name, rawFilters} = {}) {\n    const params = rawFilters || {};\n    debug('params', params);\n    return new Promise((resolve, reject) => {\n      this._sdk.describeApplications(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          reject(err);\n        } else {\n          resolve(filterObjects([\n            {key: 'ApplicationName', query: name}\n          ], response.Applications));\n        }\n      });\n    });\n  }\n\n  /**\n   * Return Environment list\n   *\n   * @param {string} [name] environment name\n   * @param {string} [appName] application name\n   * @param {string} [cname] cname\n   * @param {Object} [rawFilters] filter for params\n   * @return {Promise}\n   */\n  getEnvironments({name, appName, cname, rawFilters} = {}) {\n    const params = rawFilters || {};\n    return new Promise((resolve, reject) => {\n      this._sdk.describeEnvironments(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          reject(err);\n        } else {\n          resolve(filterObjects([\n            {key: 'EnvironmentName', query: name},\n            {key: 'ApplicationName', query: appName},\n            {key: 'CNAME', query: cname}\n          ], response.Environments));\n        }\n      });\n    });\n  }\n}\n"
+  },
+  {
+    "__docId__": 20,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debug",
+    "memberof": "src/eb.js",
+    "longname": "src/eb.js~debug",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/eb.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "EB",
+    "memberof": "src/eb.js",
+    "longname": "src/eb.js~EB",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/eb.js",
+    "importStyle": "EB",
+    "description": "ElasticBeanstalk",
+    "lineNumber": 11,
+    "interface": false,
+    "extends": [
+      "src/service~Service"
+    ]
+  },
+  {
+    "__docId__": 22,
+    "kind": "get",
+    "static": true,
+    "variation": null,
+    "name": "SDKName",
+    "memberof": "src/eb.js~EB",
+    "longname": "src/eb.js~EB.SDKName",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 23,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getApplications",
+    "memberof": "src/eb.js~EB",
+    "longname": "src/eb.js~EB#getApplications",
+    "access": null,
+    "description": "Return Application list",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "name",
+        "description": "application name"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "rawFilters",
+        "description": "filter for params"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 24,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getEnvironments",
+    "memberof": "src/eb.js~EB",
+    "longname": "src/eb.js~EB#getEnvironments",
+    "access": null,
+    "description": "Return Environment list",
+    "lineNumber": 51,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "name",
+        "description": "environment name"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "appName",
+        "description": "application name"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "cname",
+        "description": "cname"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "rawFilters",
+        "description": "filter for params"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 25,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/ec2.js",
+    "memberof": null,
+    "longname": "src/ec2.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import debugModule from 'debug';\nimport Service from './service';\n\nconst debug = debugModule('jungle:lib');\n\n\n/**\n * EC2\n */\nexport default class EC2 extends Service {\n\n  /**\n   * Parse filter options\n   *\n   * @param {string} name name for filter\n   * @param {string} stateName state for filter\n   * @param {Object} rawFilters filter\n   * @return {Object[]}\n   */\n  parseFilterOptions(name, stateName, rawFilters) {\n    let filters = [];\n    if (name) {\n      filters.push({\n        Name: 'tag:Name',\n        Values: Array.isArray(name) ? name : [name]\n      });\n    }\n    if (stateName) {\n      filters.push({\n        Name: 'instance-state-name',\n        Values: Array.isArray(stateName) ? stateName : [stateName]\n      });\n    }\n    if (rawFilters) {\n      filters = filters.concat(rawFilters);\n    }\n    return filters;\n  }\n\n  /**\n   * Return Instance list\n   *\n   * @param {string} [name] name for filter\n   * @param {string} [stateName] state for filter\n   * @param {Object} [rawFilters] filter\n   * @return {Promise}\n   */\n  getInstances({name, stateName, rawFilters}) {\n    const Filters = this.parseFilterOptions(name, stateName, rawFilters);\n    const params = Filters.length > 0 ? {Filters} : [];\n    debug('params', params);\n    return new Promise((resolve, reject) => {\n      this._sdk.describeInstances(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          reject(err);\n        } else {\n          resolve(response.Reservations.reduce((prev, reservation) => {\n            return prev.concat(reservation.Instances);\n          }, []));\n        }\n      });\n    });\n  }\n\n  /**\n   * Start instance\n   *\n   * @param {string[]} instanceIds instance id list\n   * @param {boolean} [dryRun] flag for dryRun\n   * @return {Promise}\n   */\n  startInstances(instanceIds, dryRun = false) {\n    return new Promise((resolve, reject) => {\n      const params = {\n        InstanceIds: instanceIds,\n        DryRun: dryRun\n      };\n      this._sdk.startInstances(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          if (err.code === 'DryRunOperation') {\n            resolve({\n              Instances: instanceIds.map(id => {\n                return {\n                  InstanceId: id,\n                  CurrentState: {},\n                  PreviousState: {}\n                };\n              }),\n              dryRun: true\n            });\n          } else {\n            reject(err);\n          }\n        } else {\n          resolve({\n            Instances: response.StartingInstances,\n            dryRun: false\n          });\n        }\n      });\n    });\n  }\n\n  /**\n   * Stop instance\n   *\n   * @param {string[]} instanceIds instance id list\n   * @param {boolean} [dryRun] flag for dryRun\n   * @return {Promise}\n   */\n  stopInstances(instanceIds, dryRun = false) {\n    debug(instanceIds);\n    return new Promise((resolve, reject) => {\n      const params = {\n        InstanceIds: instanceIds,\n        DryRun: dryRun\n      };\n      this._sdk.stopInstances(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          if (err.code === 'DryRunOperation') {\n            resolve({\n              Instances: instanceIds.map(id => {\n                return {\n                  InstanceId: id,\n                  CurrentState: {},\n                  PreviousState: {}\n                };\n              }),\n              dryRun: true\n            });\n          } else {\n            reject(err);\n          }\n        } else {\n          resolve({\n            Instances: response.StoppingInstances,\n            dryRun: false\n          });\n        }\n      });\n    });\n  }\n}\n"
+  },
+  {
+    "__docId__": 26,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debug",
+    "memberof": "src/ec2.js",
+    "longname": "src/ec2.js~debug",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/ec2.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "EC2",
+    "memberof": "src/ec2.js",
+    "longname": "src/ec2.js~EC2",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/ec2.js",
+    "importStyle": "EC2",
+    "description": "EC2",
+    "lineNumber": 10,
+    "interface": false,
+    "extends": [
+      "src/service~Service"
+    ]
+  },
+  {
+    "__docId__": 28,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "parseFilterOptions",
+    "memberof": "src/ec2.js~EC2",
+    "longname": "src/ec2.js~EC2#parseFilterOptions",
+    "access": null,
+    "description": "Parse filter options",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "name",
+        "description": "name for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rawFilters",
+        "description": "filter"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 29,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getInstances",
+    "memberof": "src/ec2.js~EC2",
+    "longname": "src/ec2.js~EC2#getInstances",
+    "access": null,
+    "description": "Return Instance list",
+    "lineNumber": 48,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "name",
+        "description": "name for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "stateName",
+        "description": "state for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "rawFilters",
+        "description": "filter"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 30,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "startInstances",
+    "memberof": "src/ec2.js~EC2",
+    "longname": "src/ec2.js~EC2#startInstances",
+    "access": null,
+    "description": "Start instance",
+    "lineNumber": 74,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "instanceIds",
+        "description": "instance id list"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "dryRun",
+        "description": "flag for dryRun"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 31,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "stopInstances",
+    "memberof": "src/ec2.js~EC2",
+    "longname": "src/ec2.js~EC2#stopInstances",
+    "access": null,
+    "description": "Stop instance",
+    "lineNumber": 115,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "instanceIds",
+        "description": "instance id list"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "dryRun",
+        "description": "flag for dryRun"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 32,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/emr.js",
+    "memberof": null,
+    "longname": "src/emr.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import debugModule from 'debug';\nimport {filterObjects} from './utils';\nimport Service from './service';\n\nconst debug = debugModule('jungle:lib');\n\n\n/**\n * Elastic MapReduce\n */\nexport default class EMR extends Service {\n\n  /**\n   * Parse param options\n   *\n   * @param {string} stateName state name\n   * @param {Object} rawParams params\n   * @return {Object}\n   */\n  parseParamOptions(stateName, rawParams) {\n    let params = {};\n    if (stateName) {\n      params.ClusterStates = Array.isArray(stateName) ? stateName : [stateName];\n    }\n    if (rawParams) {\n      params = Object.assign(params, rawParams);\n    }\n    return params;\n  }\n\n  /**\n   * Return Cluster list\n   *\n   * @param {string} [name] name for filter\n   * @param {string} [stateName] state for filter\n   * @param {Object} [rawParams] options\n   * @return {Promise}\n   */\n  getClusters({name, stateName, rawParams} = {}) {\n    const params = this.parseParamOptions(stateName, rawParams);\n    debug('params', params);\n    return new Promise((resolve, reject) => {\n      this._sdk.listClusters(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          reject(err);\n        } else {\n          resolve(filterObjects([\n            {key: 'Name', query: name}\n          ], response.Clusters));\n        }\n      });\n    });\n  }\n}\n"
+  },
+  {
+    "__docId__": 33,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debug",
+    "memberof": "src/emr.js",
+    "longname": "src/emr.js~debug",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/emr.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 34,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "EMR",
+    "memberof": "src/emr.js",
+    "longname": "src/emr.js~EMR",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/emr.js",
+    "importStyle": "EMR",
+    "description": "Elastic MapReduce",
+    "lineNumber": 11,
+    "interface": false,
+    "extends": [
+      "src/service~Service"
+    ]
+  },
+  {
+    "__docId__": 35,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "parseParamOptions",
+    "memberof": "src/emr.js~EMR",
+    "longname": "src/emr.js~EMR#parseParamOptions",
+    "access": null,
+    "description": "Parse param options",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "stateName",
+        "description": "state name"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rawParams",
+        "description": "params"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 36,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getClusters",
+    "memberof": "src/emr.js~EMR",
+    "longname": "src/emr.js~EMR#getClusters",
+    "access": null,
+    "description": "Return Cluster list",
+    "lineNumber": 39,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "name",
+        "description": "name for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "stateName",
+        "description": "state for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "rawParams",
+        "description": "options"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 37,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/index.js",
+    "memberof": null,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import AWS from 'aws-sdk';\nimport loader from 'aws-sdk-config-loader';\n\nimport EB from './eb';\nimport EC2 from './ec2';\nimport EMR from './emr';\nimport RDS from './rds';\n\nloader(AWS);\n\n\nexport default class Jungle {\n\n  constructor(sdkCommonOpts = {}) {\n    this.sdkCommonOpts = sdkCommonOpts;\n  }\n\n  get eb() {\n    if (!this._eb) {\n      this._eb = new EB(this.sdkCommonOpts);\n    }\n    return this._eb;\n  }\n\n  get ec2() {\n    if (!this._ec2) {\n      this._ec2 = new EC2(this.sdkCommonOpts);\n    }\n    return this._ec2;\n  }\n\n  get emr() {\n    if (!this._emr) {\n      this._emr = new EMR(this.sdkCommonOpts);\n    }\n    return this._emr;\n  }\n\n  get rds() {\n    if (!this._rds) {\n      this._rds = new RDS(this.sdkCommonOpts);\n    }\n    return this._rds;\n  }\n}\n"
+  },
+  {
+    "__docId__": 38,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Jungle",
+    "memberof": "src/index.js",
+    "longname": "src/index.js~Jungle",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/index.js",
+    "importStyle": "Jungle",
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "__docId__": 39,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "params": [
+      {
+        "name": "sdkCommonOpts",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 40,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "sdkCommonOpts",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#sdkCommonOpts",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 41,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "eb",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#eb",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 42,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_eb",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#_eb",
+    "access": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 43,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "ec2",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#ec2",
+    "access": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 44,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_ec2",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#_ec2",
+    "access": null,
+    "description": null,
+    "lineNumber": 27,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 45,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "emr",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#emr",
+    "access": null,
+    "description": null,
+    "lineNumber": 32,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 46,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_emr",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#_emr",
+    "access": null,
+    "description": null,
+    "lineNumber": 34,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 47,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "rds",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#rds",
+    "access": null,
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 48,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_rds",
+    "memberof": "src/index.js~Jungle",
+    "longname": "src/index.js~Jungle#_rds",
+    "access": null,
+    "description": null,
+    "lineNumber": 41,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/rds.js",
+    "memberof": null,
+    "longname": "src/rds.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import debugModule from 'debug';\nimport minimatch from 'minimatch';\nimport Service from './service';\n\nconst debug = debugModule('jungle:lib');\n\n\n/**\n * RDS\n */\nexport default class RDS extends Service {\n\n  /**\n   * Return Instance list\n   *\n   * @param {string} [name] name for filter\n   * @param {Object} [rawFilters] filter\n   * @return {Promise}\n   */\n  getInstances({name, rawFilters} = {}) {\n    const params = rawFilters || [];\n    debug('params', params);\n    return new Promise((resolve, reject) => {\n      this._sdk.describeDBInstances(params, (err, response) => {\n        debug(err);\n        debug(response);\n        if (err) {\n          reject(err);\n        } else if (name) {\n          resolve(response.DBInstances.filter(i => {\n            return minimatch(i.DBInstanceIdentifier, name, {\n              nobrace: true,\n              noglobstar: true,\n              noext: true\n            });\n          }));\n        } else {\n          resolve(response.DBInstances);\n        }\n      });\n    });\n  }\n}\n"
+  },
+  {
+    "__docId__": 50,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "debug",
+    "memberof": "src/rds.js",
+    "longname": "src/rds.js~debug",
+    "access": null,
+    "export": false,
+    "importPath": "node-jungle/src/rds.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 51,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "RDS",
+    "memberof": "src/rds.js",
+    "longname": "src/rds.js~RDS",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/rds.js",
+    "importStyle": "RDS",
+    "description": "RDS",
+    "lineNumber": 11,
+    "interface": false,
+    "extends": [
+      "src/service~Service"
+    ]
+  },
+  {
+    "__docId__": 52,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getInstances",
+    "memberof": "src/rds.js~RDS",
+    "longname": "src/rds.js~RDS#getInstances",
+    "access": null,
+    "description": "Return Instance list",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "name",
+        "description": "name for filter"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "rawFilters",
+        "description": "filter"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 53,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/service.js",
+    "memberof": null,
+    "longname": "src/service.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import AWS from 'aws-sdk';\n\n\nexport default class Service {\n  constructor(opts = {}) {\n    const sdkName = this.constructor.SDKName || this.constructor.name;\n    this._sdk = new AWS[sdkName](opts);\n  }\n}\n"
+  },
+  {
+    "__docId__": 54,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Service",
+    "memberof": "src/service.js",
+    "longname": "src/service.js~Service",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/service.js",
+    "importStyle": "Service",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "__docId__": 55,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/service.js~Service",
+    "longname": "src/service.js~Service#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "params": [
+      {
+        "name": "opts",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 56,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_sdk",
+    "memberof": "src/service.js~Service",
+    "longname": "src/service.js~Service#_sdk",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 57,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/utils.js",
+    "memberof": null,
+    "longname": "src/utils.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "import minimatch from 'minimatch';\n\n\n/**\n * Return value of tag\n *\n * @param {Object[]} tags tag object\n * @param {string} key key\n * @return {string}\n */\nexport function getTagValue(tags, key) {\n  const tag = tags.find(t => t.Key === key);\n  return tag && tag.Value;\n}\n\n\n/**\n * Return filtered objects\n *\n * @param {Object[]} configs configs\n * @param {Object[]} objects objects\n * @return {Object[]}\n */\nexport function filterObjects(configs, objects) {\n  return configs.reduce((results, config) => {\n    if (!config.query) {\n      return results;\n    }\n    return results.filter(o => {\n      return minimatch(o[config.key], config.query, {\n        nobrace: true,\n        noglobstar: true,\n        noext: true\n      });\n    });\n  }, objects);\n}\n\nexport default {getTagValue, filterObjects};\n"
+  },
+  {
+    "__docId__": 58,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "getTagValue",
+    "memberof": "src/utils.js",
+    "longname": "src/utils.js~getTagValue",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/utils.js",
+    "importStyle": "{getTagValue}",
+    "description": "Return value of tag",
+    "lineNumber": 11,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "tags",
+        "description": "tag object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "key"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 59,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "filterObjects",
+    "memberof": "src/utils.js",
+    "longname": "src/utils.js~filterObjects",
+    "access": null,
+    "export": true,
+    "importPath": "node-jungle/src/utils.js",
+    "importStyle": "{filterObjects}",
+    "description": "Return filtered objects",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "configs",
+        "description": "configs"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "objects",
+        "description": "objects"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 90,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 91,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 92,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 93,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 94,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 95,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 96,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 97,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 98,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 99,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 100,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 101,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 102,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 103,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 104,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 105,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 106,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 107,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 109,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 110,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 111,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 112,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 113,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 114,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 115,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 116,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  }
+]
