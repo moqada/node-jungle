@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moqada/node-jungle.git"
+    "url": "https://github.com/moqada/node-jungle.git"
   },
   "keywords": [
     "aws",
