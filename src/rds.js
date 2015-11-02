@@ -5,8 +5,18 @@ import Service from './service';
 const debug = debugModule('jungle:lib');
 
 
+/**
+ * RDS
+ */
 export default class RDS extends Service {
 
+  /**
+   * Return Instance list
+   *
+   * @param {string} [name] name for filter
+   * @param {Object} [rawFilters] filter
+   * @return {Promise}
+   */
   getInstances({name, rawFilters} = {}) {
     const params = rawFilters || [];
     debug('params', params);

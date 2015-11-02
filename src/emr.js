@@ -5,8 +5,18 @@ import Service from './service';
 const debug = debugModule('jungle:lib');
 
 
+/**
+ * Elastic MapReduce
+ */
 export default class EMR extends Service {
 
+  /**
+   * Parse param options
+   *
+   * @param {string} stateName state name
+   * @param {Object} rawParams params
+   * @return {Object}
+   */
   parseParamOptions(stateName, rawParams) {
     let params = {};
     if (stateName) {
@@ -18,6 +28,14 @@ export default class EMR extends Service {
     return params;
   }
 
+  /**
+   * Return Cluster list
+   *
+   * @param {string} [name] name for filter
+   * @param {string} [stateName] state for filter
+   * @param {Object} [rawParams] options
+   * @return {Promise}
+   */
   getClusters({name, stateName, rawParams} = {}) {
     const params = this.parseParamOptions(stateName, rawParams);
     debug('params', params);
