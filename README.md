@@ -116,7 +116,7 @@ But, filtering target is DB Indentifier.
 - [ ] Add ec2 ssh command
 - [ ] Add ELB Sub commands
 - [ ] Refactor Internal libs
-- [ ] Add docs
+- [x] Add docs
 - [ ] Add tests
 
 
