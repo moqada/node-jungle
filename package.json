@@ -1,39 +1,14 @@
 {
   "name": "node-jungle",
-  "version": "0.4.0",
   "description": "AWS operations by cli should be simpler",
-  "main": "lib/index.js",
+  "version": "0.4.0",
+  "author": "moqada <moqada@gmail.com>",
   "bin": {
     "jungle": "bin/jungle"
   },
-  "scripts": {
-    "build": "babel src --out-dir lib",
-    "deploy": "npm-run-all doc gh-pages",
-    "doc": "esdoc -c esdoc.json",
-    "gh-pages": "gh-pages -d doc",
-    "lint": "eslint src",
-    "postpublish": "npm run deploy",
-    "prebuild": "rm -rf lib",
-    "prepublish": "git diff --exit-code && npm run --if-present build",
-    "test": "npm-run-all lint build test:*",
-    "test:example": "cd example && npm install && npm run jungle",
-    "watch": "babel src --out-dir lib --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/moqada/node-jungle.git"
-  },
-  "keywords": [
-    "aws",
-    "cli",
-    "shell"
-  ],
-  "author": "moqada <moqada@gmail.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/moqada/node-jungle/issues"
   },
-  "homepage": "https://github.com/moqada/node-jungle#readme",
   "dependencies": {
     "aws-sdk": "^2.1.47",
     "aws-sdk-config-loader": "^0.3.1",
@@ -56,5 +31,30 @@
   "files": [
     "bin",
     "lib"
-  ]
+  ],
+  "homepage": "https://github.com/moqada/node-jungle#readme",
+  "keywords": [
+    "aws",
+    "cli",
+    "shell"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moqada/node-jungle.git"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "deploy": "npm-run-all doc gh-pages",
+    "doc": "esdoc -c esdoc.json",
+    "gh-pages": "gh-pages -d doc",
+    "lint": "eslint src",
+    "postpublish": "npm run deploy",
+    "prebuild": "rm -rf lib",
+    "prepublish": "git diff --exit-code && npm run --if-present build",
+    "test": "npm-run-all lint build test:*",
+    "test:example": "cd example && npm install && npm run jungle",
+    "watch": "babel src --out-dir lib --watch"
+  }
 }
