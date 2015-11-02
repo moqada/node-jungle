@@ -7,9 +7,11 @@
     "jungle": "bin/jungle"
   },
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib",
-    "eslint": "eslint src",
-    "test": "npm run eslint && npm run build && cd example && npm install && npm run jungle",
+    "build": "babel src --out-dir lib",
+    "lint": "eslint src",
+    "prebuild": "rm -rf lib",
+    "test": "npm-run-all lint build test:*",
+    "test:example": "cd example && npm install && npm run jungle",
     "watch": "babel src --out-dir lib --watch"
   },
   "repository": {
@@ -41,7 +43,8 @@
     "babel-eslint": "^4.1.0",
     "babel-preset-es2015": "^6.0.15",
     "eslint": "^1.2.1",
-    "eslint-config-moqada": "^8.0.1"
+    "eslint-config-moqada": "^8.0.1",
+    "npm-run-all": "^1.2.12"
   },
   "files": [
     "bin",
