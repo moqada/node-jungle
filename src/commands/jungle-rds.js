@@ -15,6 +15,12 @@ const STATUS_STYLES = {
 };
 
 
+/**
+ * Colorized by state name
+ *
+ * @param {string} stateName state name
+ * @return {string}
+ */
 function coloredStatus(stateName) {
   const statusStyle = STATUS_STYLES[stateName] || STATUS_STYLES['*'];
   return statusStyle(stateName);

@@ -4,8 +4,19 @@ import Service from './service';
 const debug = debugModule('jungle:lib');
 
 
+/**
+ * EC2
+ */
 export default class EC2 extends Service {
 
+  /**
+   * Parse filter options
+   *
+   * @param {string} name name for filter
+   * @param {string} stateName state for filter
+   * @param {Object} rawFilters filter
+   * @return {Object[]}
+   */
   parseFilterOptions(name, stateName, rawFilters) {
     let filters = [];
     if (name) {
@@ -26,6 +37,14 @@ export default class EC2 extends Service {
     return filters;
   }
 
+  /**
+   * Return Instance list
+   *
+   * @param {string} [name] name for filter
+   * @param {string} [stateName] state for filter
+   * @param {Object} [rawFilters] filter
+   * @return {Promise}
+   */
   getInstances({name, stateName, rawFilters}) {
     const Filters = this.parseFilterOptions(name, stateName, rawFilters);
     const params = Filters.length > 0 ? {Filters} : [];
@@ -45,6 +64,13 @@ export default class EC2 extends Service {
     });
   }
 
+  /**
+   * Start instance
+   *
+   * @param {string[]} instanceIds instance id list
+   * @param {boolean} [dryRun] flag for dryRun
+   * @return {Promise}
+   */
   startInstances(instanceIds, dryRun = false) {
     return new Promise((resolve, reject) => {
       const params = {
@@ -79,6 +105,13 @@ export default class EC2 extends Service {
     });
   }
 
+  /**
+   * Stop instance
+   *
+   * @param {string[]} instanceIds instance id list
+   * @param {boolean} [dryRun] flag for dryRun
+   * @return {Promise}
+   */
   stopInstances(instanceIds, dryRun = false) {
     debug(instanceIds);
     return new Promise((resolve, reject) => {

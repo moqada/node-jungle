@@ -29,19 +29,19 @@
   "homepage": "https://github.com/moqada/node-jungle#readme",
   "dependencies": {
     "aws-sdk": "^2.1.47",
-    "aws-sdk-config-loader": "^0.1.0",
+    "aws-sdk-config-loader": "^0.3.1",
     "babel-runtime": "^5.8.20",
     "chalk": "^1.1.1",
     "cli-table": "^0.3.1",
     "commander": "^2.8.1",
     "debug": "^2.2.0",
-    "minimatch": "^2.0.10"
+    "minimatch": "^3.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.21",
     "babel-eslint": "^4.1.0",
     "eslint": "^1.2.1",
-    "eslint-config-moqada": "^3.0.0"
+    "eslint-config-moqada": "^7.0.0"
   },
   "files": [
     "bin",

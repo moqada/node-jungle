@@ -5,12 +5,22 @@ import Service from './service';
 const debug = debugModule('jungle:lib');
 
 
+/**
+ * ElasticBeanstalk
+ */
 export default class EB extends Service {
 
   static get SDKName() {
     return 'ElasticBeanstalk';
   }
 
+  /**
+   * Return Application list
+   *
+   * @param {string} [name] application name
+   * @param {Object} [rawFilters] filter for params
+   * @return {Promise}
+   */
   getApplications({name, rawFilters} = {}) {
     const params = rawFilters || {};
     debug('params', params);
@@ -29,6 +39,15 @@ export default class EB extends Service {
     });
   }
 
+  /**
+   * Return Environment list
+   *
+   * @param {string} [name] environment name
+   * @param {string} [appName] application name
+   * @param {string} [cname] cname
+   * @param {Object} [rawFilters] filter for params
+   * @return {Promise}
+   */
   getEnvironments({name, appName, cname, rawFilters} = {}) {
     const params = rawFilters || {};
     return new Promise((resolve, reject) => {
