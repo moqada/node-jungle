@@ -111,6 +111,15 @@ jungle rds ls
 But, filtering target is DB Indentifier.
 
 
+## Todo
+
+- [ ] Add ec2 ssh command
+- [ ] Add ELB Sub commands
+- [ ] Refactor Internal libs
+- [ ] Add docs
+- [ ] Add tests
+
+
 [npm-url]: https://www.npmjs.com/package/node-jungle
 [npm-image]: https://img.shields.io/npm/v/node-jungle.svg?style=flat-square
 [npm-download-url]: https://www.npmjs.com/package/node-jungle
