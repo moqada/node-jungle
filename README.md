@@ -116,8 +116,10 @@ But, filtering target is DB Indentifier.
 - [ ] Add ec2 ssh command
 - [ ] Add ELB Sub commands
 - [ ] Refactor Internal libs
-- [x] Add docs
+- [x] Add docs (#17)
 - [ ] Add tests
+- [ ] Replace command to `jg` from `jungle`
+- [ ] Add update-notifier
 
 
 [npm-url]: https://www.npmjs.com/package/node-jungle
