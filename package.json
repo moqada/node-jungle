@@ -25,7 +25,7 @@
     "esdoc": "^0.4.3",
     "eslint": "^1.2.1",
     "eslint-config-moqada": "^8.0.1",
-    "gh-pages": "^0.7.0",
+    "gh-pages": "^0.8.0",
     "npm-run-all": "^1.2.12"
   },
   "files": [
