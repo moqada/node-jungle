@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.2.14",
-    "aws-sdk-config-loader": "^0.3.1",
+    "aws-sdk-config-loader": "^1.0.0",
     "chalk": "^1.1.1",
     "cli-table": "^0.3.1",
     "commander": "^2.8.1",
