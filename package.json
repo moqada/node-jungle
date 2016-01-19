@@ -10,7 +10,7 @@
     "url": "https://github.com/moqada/node-jungle/issues"
   },
   "dependencies": {
-    "aws-sdk": "^2.2.14",
+    "aws-sdk": "^2.2.31",
     "aws-sdk-config-loader": "^1.0.0",
     "chalk": "^1.1.1",
     "cli-table": "^0.3.1",
