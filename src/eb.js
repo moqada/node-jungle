@@ -10,6 +10,11 @@ const debug = debugModule('jungle:lib');
  */
 export default class EB extends Service {
 
+  /**
+   * SDK name
+   *
+   * @return {string}
+   */
   static get SDKName() {
     return 'ElasticBeanstalk';
   }
