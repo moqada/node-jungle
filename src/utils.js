@@ -9,7 +9,7 @@ import minimatch from 'minimatch';
  * @return {string}
  */
 export function getTagValue(tags, key) {
-  const tag = tags.find(t => t.Key === key);
+  const tag = Array.find(tags, t => t.Key === key);
   return tag && tag.Value;
 }
 
