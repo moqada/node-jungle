@@ -1,7 +1,7 @@
 {
-  "coverage": "62.06%",
+  "coverage": "93.1%",
   "expectCount": 29,
-  "actualCount": 18,
+  "actualCount": 27,
   "files": {
     "src/commands/utils.js": {
       "expectCount": 4,
@@ -12,10 +12,8 @@
     },
     "src/eb.js": {
       "expectCount": 4,
-      "actualCount": 3,
-      "undocumentLines": [
-        13
-      ]
+      "actualCount": 4,
+      "undocumentLines": []
     },
     "src/ec2.js": {
       "expectCount": 5,
@@ -29,15 +27,9 @@
     },
     "src/index.js": {
       "expectCount": 7,
-      "actualCount": 0,
+      "actualCount": 6,
       "undocumentLines": [
-        12,
-        14,
-        18,
-        25,
-        32,
-        39,
-        15
+        23
       ]
     },
     "src/rds.js": {
@@ -47,11 +39,8 @@
     },
     "src/service.js": {
       "expectCount": 2,
-      "actualCount": 0,
-      "undocumentLines": [
-        4,
-        5
-      ]
+      "actualCount": 2,
+      "undocumentLines": []
     },
     "src/utils.js": {
       "expectCount": 2,
