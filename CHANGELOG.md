@@ -1,3 +1,13 @@
+<a name="0.4.2"></a>
+## [0.4.2](https://github.com/moqada/node-jungle/compare/v0.4.1...v0.4.2) (2016-03-22)
+
+
+### Bug Fixes
+
+* **node-jungle:** Fix Errors on Node 0.10.x ([268bd3f](https://github.com/moqada/node-jungle/commit/268bd3f))
+
+
+
 <a name="0.4.1"></a>
 ## [0.4.1](https://github.com/moqada/node-jungle/compare/v0.4.0...v0.4.1) (2015-11-02)
 
