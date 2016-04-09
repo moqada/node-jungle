@@ -31,12 +31,14 @@ export default class EMR extends Service {
   /**
    * Return Cluster list
    *
-   * @param {string} [name] name for filter
-   * @param {string} [stateName] state for filter
-   * @param {Object} [rawParams] options
+   * @param {Object} [opts] Options
+   * @param {string} [opts.name] name for filter
+   * @param {string} [opts.stateName] state for filter
+   * @param {Object} [opts.rawParams] options
    * @return {Promise}
    */
-  getClusters({name, stateName, rawParams} = {}) {
+  getClusters(opts = {}) {
+    const {name, stateName, rawParams} = opts;
     const params = this.parseParamOptions(stateName, rawParams);
     debug('params', params);
     return new Promise((resolve, reject) => {
