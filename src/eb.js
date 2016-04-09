@@ -22,11 +22,13 @@ export default class EB extends Service {
   /**
    * Return Application list
    *
-   * @param {string} [name] application name
-   * @param {Object} [rawFilters] filter for params
+   * @param {Object} [opts] Options
+   * @param {string} [opts.name] application name
+   * @param {Object} [opts.rawFilters] filter for params
    * @return {Promise}
    */
-  getApplications({name, rawFilters} = {}) {
+  getApplications(opts = {}) {
+    const {name, rawFilters} = opts;
     const params = rawFilters || {};
     debug('params', params);
     return new Promise((resolve, reject) => {
@@ -47,13 +49,15 @@ export default class EB extends Service {
   /**
    * Return Environment list
    *
-   * @param {string} [name] environment name
-   * @param {string} [appName] application name
-   * @param {string} [cname] cname
-   * @param {Object} [rawFilters] filter for params
+   * @param {Object} [opts] Options
+   * @param {string} [opts.name] environment name
+   * @param {string} [opts.appName] application name
+   * @param {string} [opts.cname] cname
+   * @param {Object} [opts.rawFilters] filter for params
    * @return {Promise}
    */
-  getEnvironments({name, appName, cname, rawFilters} = {}) {
+  getEnvironments(opts = {}) {
+    const {name, appName, cname, rawFilters} = opts;
     const params = rawFilters || {};
     return new Promise((resolve, reject) => {
       this._sdk.describeEnvironments(params, (err, response) => {

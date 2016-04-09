@@ -13,11 +13,13 @@ export default class RDS extends Service {
   /**
    * Return Instance list
    *
-   * @param {string} [name] name for filter
-   * @param {Object} [rawFilters] filter
+   * @param {Object} [opts] Options
+   * @param {string} [opts.name] name for filter
+   * @param {Object} [opts.rawFilters] filter
    * @return {Promise}
    */
-  getInstances({name, rawFilters} = {}) {
+  getInstances(opts = {}) {
+    const {name, rawFilters} = opts;
     const params = rawFilters || [];
     debug('params', params);
     return new Promise((resolve, reject) => {
