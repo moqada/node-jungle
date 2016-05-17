@@ -28,7 +28,7 @@
     "eslint": "^2.7.0",
     "eslint-config-moqada": "^13.0.0",
     "gh-pages": "^0.11.0",
-    "npm-run-all": "^1.2.12"
+    "npm-run-all": "^2.1.0"
   },
   "files": [
     "bin",
