@@ -26,7 +26,8 @@
     "babel-preset-es2015": "^6.1.4",
     "esdoc": "^0.4.3",
     "eslint": "^2.7.0",
-    "eslint-config-moqada": "^13.0.0",
+    "eslint-config-moqada": "^15.0.0",
+    "eslint-plugin-node": "^1.4.0",
     "gh-pages": "^0.11.0",
     "npm-run-all": "^2.1.0"
   },
