@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
 
+/* eslint-disable object-property-newline */
 export const DEFAULT_TABLE_OPTIONS = {
   chars: {
     top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
@@ -12,6 +13,8 @@ export const DEFAULT_TABLE_OPTIONS = {
   },
   style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}
 };
+
+/* eslint-enable */
 
 
 /**
