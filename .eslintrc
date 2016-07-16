@@ -4,3 +4,4 @@ extends:
 parser: babel-eslint
 rules:
   node/no-unsupported-features: 0
+  object-curly-newline: 0
