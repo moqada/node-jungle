@@ -29,7 +29,7 @@
     "eslint-config-moqada": "^16.0.0",
     "eslint-plugin-node": "^2.0.0",
     "gh-pages": "^0.11.0",
-    "npm-run-all": "^2.1.0"
+    "npm-run-all": "^3.0.0"
   },
   "files": [
     "bin",
