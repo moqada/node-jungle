@@ -17,7 +17,7 @@ export default class EC2 extends Service {
    * @param {Object} rawFilters filter
    * @return {Object[]}
    */
-  parseFilterOptions(name, stateName, rawFilters) {
+  static parseFilterOptions(name, stateName, rawFilters) {
     let filters = [];
     if (name) {
       filters.push({
@@ -74,8 +74,8 @@ export default class EC2 extends Service {
   startInstances(instanceIds, dryRun = false) {
     return new Promise((resolve, reject) => {
       const params = {
-        InstanceIds: instanceIds,
-        DryRun: dryRun
+        DryRun: dryRun,
+        InstanceIds: instanceIds
       };
       this._sdk.startInstances(params, (err, response) => {
         debug(err);
@@ -85,8 +85,8 @@ export default class EC2 extends Service {
             resolve({
               Instances: instanceIds.map(id => {
                 return {
-                  InstanceId: id,
                   CurrentState: {},
+                  InstanceId: id,
                   PreviousState: {}
                 };
               }),
@@ -116,8 +116,8 @@ export default class EC2 extends Service {
     debug(instanceIds);
     return new Promise((resolve, reject) => {
       const params = {
-        InstanceIds: instanceIds,
-        DryRun: dryRun
+        DryRun: dryRun,
+        InstanceIds: instanceIds
       };
       this._sdk.stopInstances(params, (err, response) => {
         debug(err);
@@ -127,8 +127,8 @@ export default class EC2 extends Service {
             resolve({
               Instances: instanceIds.map(id => {
                 return {
-                  InstanceId: id,
                   CurrentState: {},
+                  InstanceId: id,
                   PreviousState: {}
                 };
               }),

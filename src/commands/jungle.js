@@ -4,8 +4,8 @@ import {defaultOutputHelp} from './utils';
 
 
 program
-.version(pkg.version)
-.description('AWS operation CLI');
+  .version(pkg.version)
+  .description('AWS operation CLI');
 
 program.command('eb', 'EB Group');
 program.command('ec2', 'EC2 Group');
