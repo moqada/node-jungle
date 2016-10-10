@@ -29,11 +29,11 @@ export function filterObjects(configs, objects) {
     return results.filter(o => {
       return minimatch(o[config.key], config.query, {
         nobrace: true,
-        noglobstar: true,
-        noext: true
+        noext: true,
+        noglobstar: true
       });
     });
   }, objects);
 }
 
-export default {getTagValue, filterObjects};
+export default {filterObjects, getTagValue};

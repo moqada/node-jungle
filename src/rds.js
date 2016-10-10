@@ -32,8 +32,8 @@ export default class RDS extends Service {
           resolve(response.DBInstances.filter(i => {
             return minimatch(i.DBInstanceIdentifier, name, {
               nobrace: true,
-              noglobstar: true,
-              noext: true
+              noext: true,
+              noglobstar: true
             });
           }));
         } else {

@@ -4,14 +4,14 @@ import chalk from 'chalk';
 /* eslint-disable object-property-newline */
 export const DEFAULT_TABLE_OPTIONS = {
   chars: {
-    top: '', 'top-mid': '', 'top-left': '', 'top-right': '',
-    bottom: '', 'bottom-mid': '', 'bottom-left': ' ', 'bottom-right': ' ',
+    bottom: '', 'bottom-left': ' ', 'bottom-mid': '', 'bottom-right': ' ',
     left: ' ', 'left-mid': '',
     mid: '-', 'mid-mid': ' ',
+    middle: ' ',
     right: '', 'right-mid': '',
-    middle: ' '
+    top: '', 'top-left': '', 'top-mid': '', 'top-right': ''
   },
-  style: {compact: true, head: ['gray'], 'padding-right': 0, 'padding-left': 0}
+  style: {compact: true, head: ['gray'], 'padding-left': 0, 'padding-right': 0}
 };
 
 /* eslint-enable */

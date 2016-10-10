@@ -17,7 +17,7 @@ export default class EMR extends Service {
    * @param {Object} rawParams params
    * @return {Object}
    */
-  parseParamOptions(stateName, rawParams) {
+  static parseParamOptions(stateName, rawParams) {
     let params = {};
     if (stateName) {
       params.ClusterStates = Array.isArray(stateName) ? stateName : [stateName];
